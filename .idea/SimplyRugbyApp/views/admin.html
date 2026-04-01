@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simply Rugby - Volunteer Coordination & Scheduling System</title>
+    <style>
+        :root {
+            --green: #2e7d32;
+            --green-dark: #1b5e20;
+            --green-light: #e8f5e9;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --border: #d9e2dc;
+            --text: #263238;
+            --muted: #607d8b;
+            --danger: #c62828;
+            --warning: #ef6c00;
+            --info: #1565c0;
+            --shadow: 0 4px 16px rgba(0,0,0,0.08);
+            --radius: 14px;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 12px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 10px 10px 18px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 18px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: var(--green);
+        }
+
+        .brand p {
+            margin: 6px 0 0;
+            font-size: 0.86rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .menu-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 16px 8px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: bold;
+        }
+
+        .sidebar button {
+            width: 100%;
+            text-align: left;
+            border: 1px solid transparent;
+            background: #fff;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.2s ease;
+        }
+
+        .sidebar button:hover {
+            background: var(--green-light);
+            border-color: #c8e6c9;
+        }
+
+        .sidebar button.active {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 245px;
+            padding: 20px 24px 50px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-left h2 {
+            margin: 0;
+            color: var(--green);
+            font-size: 1.45rem;
+        }
+
+        .header-left p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #edf2ef;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: var(--green);
+            font-size: 1.08rem;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn, .btn-secondary, .btn-danger {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.93rem;
+            transition: 0.2s ease;
+        }
+
+        .btn {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn:hover { background: var(--green-dark); }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--green);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--green-light);
+        }
+
+        .btn-danger {
+            background: #fff5f5;
+            color: var(--danger);
+            border: 1px solid #ffd6d6;
+        }
+
+        .btn-danger:hover {
+            background: #ffe9e9;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #cfd8dc;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.93rem;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+            gap: 14px;
+        }
+
+        .summary-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f9fcfa 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .summary-card h4 {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: var(--green);
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .mini-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+        }
+
+        .mini-card h4 {
+            margin: 0 0 8px;
+            color: var(--green);
+        }
+
+        .mini-card p {
+            margin: 4px 0;
+            font-size: 0.92rem;
+            color: var(--text);
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 6px;
+            margin-top: 4px;
+        }
+
+        .badge-green { background: #e8f5e9; color: var(--green); }
+        .badge-orange { background: #fff3e0; color: var(--warning); }
+        .badge-red { background: #ffebee; color: var(--danger); }
+        .badge-blue { background: #e3f2fd; color: var(--info); }
+        .badge-grey { background: #eceff1; color: #455a64; }
+
+        .section-note {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: -6px;
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 11px 12px;
+            border-bottom: 1px solid #eceff1;
+            vertical-align: top;
+            text-align: left;
+            font-size: 0.92rem;
+        }
+
+        th {
+            background: #fafcfb;
+            color: var(--green);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:hover td {
+            background: #fcfffd;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .link-btn {
+            color: var(--info);
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .link-btn.delete {
+            color: var(--danger);
+        }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0,0,0,0.45);
+            overflow-y: auto;
+            padding: 30px 14px;
+        }
+
+        .modal-content {
+            max-width: 780px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--green);
+            font-size: 1.15rem;
+        }
+
+        .close {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #90a4ae;
+            line-height: 1;
+        }
+
+        .close:hover { color: #263238; }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #37474f;
+        }
+
+        .helper {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: #fafcfb;
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 0.92rem;
+        }
+
+        .alert-warning {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            color: #8d6e63;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            color: #0d47a1;
+        }
+
+        .footer-note {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        @media (max-width: 980px) {
+            .grid-2, .grid-3, .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>Simply Rugby</h1>
+            <p>Volunteer Coordination & Scheduling System</p>
+        </div>
+
+        <div class="menu-label">Dashboard</div>
+        <button class="active" onclick="loadContent('overview')">Home Overview</button>
+
+        <div class="menu-label">Core Requirements</div>
+        <button onclick="loadContent('volunteers')">Volunteer Information</button>
+        <button onclick="loadContent('events')">Events & Roles</button>
+        <button onclick="loadContent('availability')">Volunteer Availability</button>
+        <button onclick="loadContent('assignments')">Assignments & Scheduling</button>
+        <button onclick="loadContent('conflicts')">Scheduling Conflicts</button>
+        <button onclick="loadContent('participation')">Participation Tracking</button>
+        <button onclick="loadContent('notifications')">Notifications</button>
+        <button onclick="loadContent('secure')">Secure Records</button>
+        <button onclick="loadContent('schedule')">Volunteer Schedules</button>
+        <button onclick="loadContent('qualifications')">Qualification Status</button>
+        <button onclick="loadContent('reports')">Gap Reports</button>
+        <button onclick="loadContent('meeting')">Client Questions</button>
+
+    </aside>
+
+    <main class="main-content">
+        <section id="qualifications" class="content-section"></section>
+        <section id="reports" class="content-section"></section>
+        <section id="meeting" class="content-section"></section>
+        <div class="header">
+            <div class="header-left">
+                <h2 id="pageTitle">System Overview</h2>
+                <p id="pageSubtitle">Manage volunteers, event roles, assignments, availability, participation and secure records.</p>
+            </div>
+            <div class="header-right">
+                <div class="pill">Current Time: <span id="currentTime"></span></div>
+                <div class="pill" id="userInfoBar">User: -</div>
+                <button class="btn-secondary" onclick="seedDemoData()">Load Demo Data</button>
+                <button class="btn-danger" onclick="resetAllData()">Reset System Data</button>
+                <button class="btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <section id="overview" class="content-section active"></section>
+        <section id="volunteers" class="content-section"></section>
+        <section id="events" class="content-section"></section>
+        <section id="availability" class="content-section"></section>
+        <section id="assignments" class="content-section"></section>
+        <section id="conflicts" class="content-section"></section>
+        <section id="participation" class="content-section"></section>
+        <section id="notifications" class="content-section"></section>
+        <section id="secure" class="content-section"></section>
+        <section id="schedule" class="content-section"></section>
+    </main>
+</div>
+
+<div id="volunteerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="volunteerModalTitle">Add Volunteer</h2>
+            <span class="close" onclick="closeModal('volunteerModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="volunteerForm">
+                <input type="hidden" id="volunteerEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="volunteerName" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="volunteerEmail" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="volunteerPhone" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="volunteerStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Skills / Qualifications</label>
+                        <input type="text" id="volunteerSkills" placeholder="First Aid, Refereeing, Coaching" required />
+                    </div>
+                    <div class="form-group full">
+                        <label>Roles Volunteer Can Fulfil</label>
+                        <input type="text" id="volunteerRoles" placeholder="Coach, Medic, Referee, Equipment Setup" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Name</label>
+                        <input type="text" id="volunteerEmergencyName" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Phone</label>
+                        <input type="text" id="volunteerEmergencyPhone" required />
+                    </div>
+                    <div class="form-group full">
+                        <label>Notes / Legal or Qualification Reference</label>
+                        <textarea id="volunteerLegalNotes" rows="3" placeholder="Qualification date, legal notes, clearance notes"></textarea>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Volunteer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="eventModalTitle">Add Event</h2>
+            <span class="close" onclick="closeModal('eventModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="eventForm">
+                <input type="hidden" id="eventEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Event Name</label>
+                        <input type="text" id="eventName" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select id="eventType" required>
+                            <option value="Match">Match</option>
+                            <option value="Training Session">Training Session</option>
+                            <option value="Tournament">Tournament</option>
+                            <option value="Fundraiser">Fundraiser</option>
+                            <option value="Social Event">Social Event</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="eventDate" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" id="eventTime" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="eventLocation" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="eventStatus" required>
+                            <option value="Planned">Planned</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Required Roles</label>
+                        <textarea id="eventRoles" rows="3" placeholder="Coach:2, Medic:1, Referee:1, Equipment Setup:2" required></textarea>
+                        <div class="helper">Format example: Coach:2, Medic:1, Referee:1</div>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Event</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="availabilityModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="availabilityModalTitle">Record Volunteer Availability</h2>
+            <span class="close" onclick="closeModal('availabilityModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="availabilityForm">
+                <input type="hidden" id="availabilityEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Volunteer</label>
+                        <select id="availabilityVolunteer" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="availabilityDate" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="availabilityStart" required />
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="availabilityEnd" required />
+                    </div>
+                    <div class="form-group full">
+                        <label>Availability Status</label>
+                        <select id="availabilityStatus" required>
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
+                            <option value="Preferred">Preferred</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Availability</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="assignmentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="assignmentModalTitle">Assign Volunteer</h2>
+            <span class="close" onclick="closeModal('assignmentModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-info">
+                Assignment validation checks role match, availability and double booking before saving.
+            </div>
+            <form id="assignmentForm">
+                <input type="hidden" id="assignmentEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Volunteer</label>
+                        <select id="assignmentVolunteer" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Event</label>
+                        <select id="assignmentEvent" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Role</label>
+                        <input type="text" id="assignmentRole" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Assignment Status</label>
+                        <select id="assignmentStatus" required>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Removed">Removed</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Assignment</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="participationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="participationModalTitle">Record Participation</h2>
+            <span class="close" onclick="closeModal('participationModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="participationForm">
+                <input type="hidden" id="participationEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Volunteer</label>
+                        <select id="participationVolunteer" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Event</label>
+                        <select id="participationEvent" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Attendance</label>
+                        <select id="participationAttendance" required>
+                            <option value="Present">Present</option>
+                            <option value="Absent">Absent</option>
+                            <option value="Late">Late</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Hours</label>
+                        <input type="number" id="participationHours" min="0" step="0.5" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Game Score / Result</label>
+                        <input type="text" id="participationScore" placeholder="e.g. 21-15 or N/A" />
+                    </div>
+                    <div class="form-group">
+                        <label>Role Performed</label>
+                        <input type="text" id="participationRole" placeholder="Medic / Coach / Referee" />
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Record</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="notificationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="notificationModalTitle">Create Notification</h2>
+            <span class="close" onclick="closeModal('notificationModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="notificationForm">
+                <input type="hidden" id="notificationEditId" />
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="notificationTitle" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="notificationType" required>
+                            <option value="Upcoming Event Reminder">Upcoming Event Reminder</option>
+                            <option value="Schedule Change">Schedule Change</option>
+                            <option value="Meeting Notice">Meeting Notice</option>
+                            <option value="General Update">General Update</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Group</label>
+                        <select id="notificationTarget" required>
+                            <option value="All Volunteers">All Volunteers</option>
+                            <option value="Coaches">Coaches</option>
+                            <option value="Medics">Medics</option>
+                            <option value="Referees">Referees</option>
+                            <option value="Event Support Team">Event Support Team</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Status</label>
+                        <select id="notificationDelivery" required>
+                            <option value="Draft">Draft</option>
+                            <option value="Sent">Sent</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Message</label>
+                        <textarea id="notificationMessage" rows="4" required></textarea>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Save Notification</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const AUTH_KEYS = {
+        currentUser: "sr_currentUser"
+    };
+
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem(AUTH_KEYS.currentUser));
+    }
+
+    function requireLogin(expectedRole = null) {
+        const user = getCurrentUser();
+        if (!user) {
+            alert("Please login first.");
+            window.location.href = "login.html";
+            return null;
+        }
+
+        if (expectedRole && user.role !== expectedRole) {
+            alert("Access denied.");
+            if (user.role === "Club Administrator") {
+                window.location.href = "admin.html";
+            } else if (user.role === "Volunteer Coordinator") {
+                window.location.href = "coordinator.html";
+            } else {
+                window.location.href = "volunteer.html";
+            }
+            return null;
+        }
+
+        return user;
+    }
+
+    function logout() {
+        localStorage.removeItem(AUTH_KEYS.currentUser);
+        window.location.href = "login.html";
+    }
+
+    function getUserScopedKeys() {
+        const user = getCurrentUser();
+        const suffix = user ? `_u${user.id}` : "_guest";
+        return {
+            volunteers: `sr_volunteers${suffix}`,
+            events: `sr_events${suffix}`,
+            availability: `sr_availability${suffix}`,
+            assignments: `sr_assignments${suffix}`,
+            participation: `sr_participation${suffix}`,
+            notifications: `sr_notifications${suffix}`,
+            qualifications: `sr_qualifications${suffix}`,
+            gapReports: `sr_gap_reports${suffix}`,
+            meetingQuestions: `sr_meeting_questions${suffix}`
+        };
+    }
+
+    function getData(key) {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    function setData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function nextId(data) {
+        return data.length ? Math.max(...data.map(x => x.id)) + 1 : 1;
+    }
+
+    function escapeHtml(text) {
+        return String(text ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
+    }
+
+    function updateClock() {
+        document.getElementById("currentTime").textContent = new Date().toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function renderUserBar() {
+        const user = getCurrentUser();
+        const bar = document.getElementById("userInfoBar");
+        if (!bar || !user) return;
+        bar.textContent = `User: ${user.name} (${user.role})`;
+    }
+
+    const pageMeta = {
+        overview: ["System Overview", "Overview of volunteer records, event scheduling, assignment status, participation, notifications and secure records."],
+        volunteers: ["Volunteer Information", "Store volunteer contact details, skills, qualifications, roles and emergency details."],
+        events: ["Events & Roles", "Manage upcoming club activities and the volunteer roles required for each event."],
+        availability: ["Volunteer Availability", "Record volunteer dates and times to support scheduling and conflict avoidance."],
+        assignments: ["Assignments & Scheduling", "Assign volunteers to event roles and validate qualifications, availability and double booking."],
+        conflicts: ["Scheduling Conflicts", "Review assignment issues, missing availability, double booking and role mismatch warnings."],
+        participation: ["Participation Tracking", "Record attendance, hours contributed, role history and event participation summaries."],
+        notifications: ["Notifications / Reminders", "Create reminders and communication messages for all volunteers or selected groups."],
+        secure: ["Secure Records", "View secure administrative and emergency information with limited exposure in the interface."],
+        schedule: ["Volunteer Schedules", "Search a volunteer and view their availability, assignments and participation history."]
+    };
+
+    function loadContent(pageId) {
+        document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+
+        document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
+        const btn = Array.from(document.querySelectorAll(".sidebar button")).find(
+            b => b.getAttribute("onclick") === `loadContent('${pageId}')`
+        );
+        if (btn) btn.classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[pageId][0];
+        document.getElementById("pageSubtitle").textContent = pageMeta[pageId][1];
+
+        renderAll();
+    }
+
+    function renderAll() {
+        updateGapHistory();
+
+        renderOverview();
+        renderVolunteers();
+        renderEvents();
+        renderAvailability();
+        renderAssignments();
+        renderConflicts();
+        renderParticipation();
+        renderNotifications();
+        renderSecure();
+        renderQualifications();
+        renderReports();
+        renderMeeting();
+        renderSchedule();
+        refreshSelectOptions();
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(e) {
+        if (e.target.classList.contains("modal")) {
+            e.target.style.display = "none";
+        }
+    };
+
+    function parseRoles(roleText) {
+        return roleText.split(",").map(item => {
+            const [role, count] = item.split(":").map(s => s.trim());
+            return { role: role || "", count: Number(count || 1) };
+        }).filter(x => x.role);
+    }
+
+    function getVolunteerByName(name) {
+        return getData(getUserScopedKeys().volunteers).find(v => v.name === name);
+    }
+
+    function getEventByName(name) {
+        return getData(getUserScopedKeys().events).find(e => e.name === name);
+    }
+
+    function rolesIncludes(volunteerRolesText, role) {
+        return volunteerRolesText.toLowerCase().split(",").map(x => x.trim()).includes(role.toLowerCase().trim());
+    }
+
+    function timeInRange(start, end, target) {
+        return start <= target && target <= end;
+    }
+
+    function hasAvailability(volunteerName, eventDate, eventTime) {
+        const entries = getData(getUserScopedKeys().availability)
+            .filter(a => a.volunteer === volunteerName && a.date === eventDate);
+        if (!entries.length) return false;
+        return entries.some(a => {
+            if (a.status === "Unavailable") return false;
+            return timeInRange(a.startTime, a.endTime, eventTime);
+        });
+    }
+
+    function detectAssignmentIssues(assignment, ignoreId = null) {
+        const issues = [];
+        const volunteer = getVolunteerByName(assignment.volunteer);
+        const event = getEventByName(assignment.event);
+        const allAssignments = getData(getUserScopedKeys().assignments);
+
+        if (!volunteer) issues.push("Volunteer record missing");
+        if (!event) issues.push("Event record missing");
+
+        if (volunteer && !rolesIncludes(volunteer.roles, assignment.role)) {
+            issues.push("Role not matched to volunteer capability");
+        }
+
+        if (event && !hasAvailability(assignment.volunteer, event.date, event.time)) {
+            issues.push("Volunteer not available for event time");
+        }
+
+        if (event) {
+            const duplicate = allAssignments.find(a =>
+                a.id !== ignoreId &&
+                a.status !== "Removed" &&
+                a.volunteer === assignment.volunteer &&
+                getEventByName(a.event)?.date === event.date &&
+                getEventByName(a.event)?.time === event.time
+            );
+            if (duplicate) issues.push("Possible double booking");
+        }
+
+        return issues;
+    }
+
+    function getRoleGapSummary() {
+        const events = getData(getUserScopedKeys().events);
+        const assignments = getData(getUserScopedKeys().assignments).filter(a => a.status !== "Removed");
+        const gaps = [];
+
+        events.forEach(event => {
+            parseRoles(event.roles).forEach(req => {
+                const assignedCount = assignments.filter(
+                    a => a.event === event.name && a.role.toLowerCase() === req.role.toLowerCase()
+                ).length;
+                const gap = req.count - assignedCount;
+                if (gap > 0) {
+                    gaps.push({
+                        event: event.name,
+                        role: req.role,
+                        missing: gap,
+                        date: event.date
+                    });
+                }
+            });
+        });
+
+        return gaps;
+    }
+
+    function getVolunteerHoursSummary() {
+        const participation = getData(getUserScopedKeys().participation);
+        const totals = {};
+        participation.forEach(p => {
+            totals[p.volunteer] = (totals[p.volunteer] || 0) + Number(p.hours || 0);
+        });
+        return Object.entries(totals)
+            .map(([name, hours]) => ({ name, hours }))
+            .sort((a, b) => b.hours - a.hours);
+    }
+
+    function maskPhone(phone) {
+        if (!phone) return "";
+        return phone.length > 4 ? "*".repeat(phone.length - 4) + phone.slice(-4) : "****";
+    }
+
+    function refreshSelectOptions() {
+        const volunteers = getData(getUserScopedKeys().volunteers);
+        const events = getData(getUserScopedKeys().events);
+
+        const volunteerSelectIds = ["availabilityVolunteer", "assignmentVolunteer", "participationVolunteer"];
+        volunteerSelectIds.forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            sel.innerHTML = volunteers.length
+                ? volunteers.map(v => `<option value="${escapeHtml(v.name)}">${escapeHtml(v.name)}</option>`).join("")
+                : `<option value="">No volunteers available</option>`;
+        });
+
+        function updateGapHistory() {
+            const key = getUserScopedKeys().gapReports;
+            const existing = getData(key);
+            const gaps = getRoleGapSummary();
+
+            gaps.forEach(g => {
+                const existed = existing.find(item =>
+                    item.event === g.event &&
+                    item.role === g.role &&
+                    item.date === g.date
+                );
+                if (!existed) {
+                    existing.push({
+                        id: nextId(existing),
+                        event: g.event,
+                        role: g.role,
+                        missing: g.missing,
+                        date: g.date,
+                        month: g.date ? g.date.slice(0, 7) : ""
+                    });
+                }
+            });
+
+            setData(key, existing);
+        }
+
+        function getLongTermGapSummary() {
+            const reports = getData(getUserScopedKeys().gapReports);
+            const map = {};
+
+            reports.forEach(item => {
+                const key = `${item.role}_${item.month}`;
+                if (!map[key]) {
+                    map[key] = {
+                        role: item.role,
+                        month: item.month,
+                        times: 0,
+                        totalMissing: 0
+                    };
+                }
+                map[key].times += 1;
+                map[key].totalMissing += Number(item.missing || 0);
+            });
+
+            return Object.values(map).sort((a, b) => b.totalMissing - a.totalMissing);
+        }
+
+        function renderReports() {
+            const wrap = document.getElementById("reports");
+            const data = getLongTermGapSummary();
+
+            if (!wrap) return;
+
+            wrap.innerHTML = `
+        <div class="card">
+            <h3>Long-term Gap Reports</h3>
+            <p class="section-note">Review repeated role shortages over time.</p>
+            ${data.length ? `
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Role</th>
+                                <th>Gap Occurrences</th>
+                                <th>Total Missing Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(item => `
+                                <tr>
+                                    <td>${escapeHtml(item.month)}</td>
+                                    <td>${escapeHtml(item.role)}</td>
+                                    <td>${item.times}</td>
+                                    <td>${item.totalMissing}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `<div class="empty-state">No long-term gap data available yet.</div>`}
+        </div>
+    `;
+        }
+
+        const eventSelectIds = ["assignmentEvent", "participationEvent"];
+        eventSelectIds.forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            sel.innerHTML = events.length
+                ? events.map(e => `<option value="${escapeHtml(e.name)}">${escapeHtml(e.name)} (${escapeHtml(e.date)} ${escapeHtml(e.time)})</option>`).join("")
+                : `<option value="">No events available</option>`;
+        });
+    }
+
+    function getQualificationStatus(expiryDate) {
+        if (!expiryDate) return { text: "No Expiry", className: "badge-grey" };
+
+        const today = new Date();
+        const expiry = new Date(expiryDate + "T23:59:59");
+        const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) return { text: "Expired", className: "badge-red" };
+        if (diffDays <= 30) return { text: "Expiring Soon", className: "badge-orange" };
+        return { text: "Valid", className: "badge-green" };
+    }
+
+    function renderQualifications() {
+        const wrap = document.getElementById("qualifications");
+        const data = getData(getUserScopedKeys().qualifications);
+
+        if (!wrap) return;
+
+        wrap.innerHTML = `
+        <div class="card">
+            <h3>Qualification Status</h3>
+            <p class="section-note">Track qualification validity and expiry reminders.</p>
+            ${data.length ? `
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Qualification</th>
+                                <th>Issue Date</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(item => {
+            const status = getQualificationStatus(item.expiryDate);
+            return `
+                                    <tr>
+                                        <td>${escapeHtml(item.volunteer)}</td>
+                                        <td>${escapeHtml(item.qualification)}</td>
+                                        <td>${escapeHtml(item.issueDate || "N/A")}</td>
+                                        <td>${escapeHtml(item.expiryDate || "N/A")}</td>
+                                        <td><span class="badge ${status.className}">${status.text}</span></td>
+                                        <td>${escapeHtml(item.note || "")}</td>
+                                    </tr>
+                                `;
+        }).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `<div class="empty-state">No qualification records available.</div>`}
+        </div>
+    `;
+    }
+
+    function renderOverview() {
+        const wrap = document.getElementById("overview");
+        const volunteers = getData(getUserScopedKeys().volunteers);
+        const events = getData(getUserScopedKeys().events);
+        const availability = getData(getUserScopedKeys().availability);
+        const assignments = getData(getUserScopedKeys().assignments);
+        const participation = getData(getUserScopedKeys().participation);
+        const notifications = getData(getUserScopedKeys().notifications);
+        const roleGaps = getRoleGapSummary().slice(0, 6);
+        const hoursSummary = getVolunteerHoursSummary().slice(0, 6);
+
+        wrap.innerHTML = `
+        <div class="card">
+          <h3>System Summary</h3>
+          <div class="summary-grid">
+            <div class="summary-card"><h4>Total Volunteers</h4><p>${volunteers.length}</p></div>
+            <div class="summary-card"><h4>Upcoming Events</h4><p>${events.length}</p></div>
+            <div class="summary-card"><h4>Availability Records</h4><p>${availability.length}</p></div>
+            <div class="summary-card"><h4>Assignments</h4><p>${assignments.length}</p></div>
+            <div class="summary-card"><h4>Participation Logs</h4><p>${participation.length}</p></div>
+            <div class="summary-card"><h4>Notifications</h4><p>${notifications.length}</p></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Upcoming Event Notices</h3>
+            <div class="list-grid">
+              ${events.length ? events.slice(0,4).map(e => `
+                <div class="mini-card">
+                  <h4>${escapeHtml(e.name)}</h4>
+                  <p><strong>Type:</strong> ${escapeHtml(e.type)}</p>
+                  <p><strong>Date:</strong> ${escapeHtml(e.date)} ${escapeHtml(e.time)}</p>
+                  <p><strong>Location:</strong> ${escapeHtml(e.location)}</p>
+                  <p><span class="badge badge-blue">${escapeHtml(e.status)}</span></p>
+                </div>
+              `).join("") : `<div class="empty-state">No event records yet.</div>`}
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Volunteer Highlights</h3>
+            <div class="list-grid">
+              ${volunteers.length ? volunteers.slice(0,4).map(v => `
+                <div class="mini-card">
+                  <h4>${escapeHtml(v.name)}</h4>
+                  <p><strong>Skills:</strong> ${escapeHtml(v.skills)}</p>
+                  <p><strong>Roles:</strong> ${escapeHtml(v.roles)}</p>
+                  <p><span class="badge badge-green">${escapeHtml(v.status)}</span></p>
+                </div>
+              `).join("") : `<div class="empty-state">No volunteer records yet.</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Roles Still Unfilled</h3>
+            ${roleGaps.length ? `
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Role</th>
+                      <th>Missing</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${roleGaps.map(g => `
+                      <tr>
+                        <td>${escapeHtml(g.event)}</td>
+                        <td>${escapeHtml(g.role)}</td>
+                        <td><span class="badge badge-orange">${g.missing}</span></td>
+                        <td>${escapeHtml(g.date)}</td>
+                      </tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            ` : `<div class="empty-state">All currently defined roles are filled.</div>`}
+          </div>
+
+          <div class="card">
+            <h3>Top Volunteer Hours</h3>
+            ${hoursSummary.length ? `
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Volunteer</th>
+                      <th>Total Hours</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${hoursSummary.map(h => `
+                      <tr>
+                        <td>${escapeHtml(h.name)}</td>
+                        <td><span class="badge badge-green">${h.hours}</span></td>
+                      </tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            ` : `<div class="empty-state">No participation hours recorded yet.</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderVolunteers() {
+        const volunteers = getData(getUserScopedKeys().volunteers);
+        const wrap = document.getElementById("volunteers");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <div class="toolbar-left"><h3 style="margin:0;">Volunteer Information</h3></div>
+            <div class="toolbar-right"><button class="btn" onclick="openVolunteerModal()">+ Add Volunteer</button></div>
+          </div>
+          <div class="section-note">Store contact details, skills, qualifications, available roles and emergency/legal-related information.</div>
+          ${volunteers.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Skills / Qualifications</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th>Emergency Contact</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${volunteers.map(v => `
+                    <tr>
+                      <td>${escapeHtml(v.name)}</td>
+                      <td>${escapeHtml(v.email)}<br>${escapeHtml(v.phone)}</td>
+                      <td>${escapeHtml(v.skills)}</td>
+                      <td>${escapeHtml(v.roles)}</td>
+                      <td><span class="badge ${v.status === 'Active' ? 'badge-green' : 'badge-grey'}">${escapeHtml(v.status)}</span></td>
+                      <td>${escapeHtml(v.emergencyName)}<br>${escapeHtml(v.emergencyPhone)}</td>
+                      <td>
+                        <a class="link-btn" onclick="editVolunteer(${v.id})">Edit</a>
+                        <a class="link-btn delete" onclick="deleteVolunteer(${v.id})">Delete</a>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No volunteer records available.</div>`}
+        </div>
+      `;
+    }
+
+    function openVolunteerModal() {
+        document.getElementById("volunteerModalTitle").textContent = "Add Volunteer";
+        document.getElementById("volunteerForm").reset();
+        document.getElementById("volunteerEditId").value = "";
+        document.getElementById("volunteerModal").style.display = "block";
+    }
+
+    function editVolunteer(id) {
+        const item = getData(getUserScopedKeys().volunteers).find(v => v.id === id);
+        if (!item) return;
+        document.getElementById("volunteerEditId").value = item.id;
+        document.getElementById("volunteerName").value = item.name;
+        document.getElementById("volunteerEmail").value = item.email;
+        document.getElementById("volunteerPhone").value = item.phone;
+        document.getElementById("volunteerStatus").value = item.status;
+        document.getElementById("volunteerSkills").value = item.skills;
+        document.getElementById("volunteerRoles").value = item.roles;
+        document.getElementById("volunteerEmergencyName").value = item.emergencyName;
+        document.getElementById("volunteerEmergencyPhone").value = item.emergencyPhone;
+        document.getElementById("volunteerLegalNotes").value = item.legalNotes || "";
+        document.getElementById("volunteerModalTitle").textContent = "Edit Volunteer";
+        document.getElementById("volunteerModal").style.display = "block";
+    }
+
+    function deleteVolunteer(id) {
+        if (!confirm("Delete this volunteer record?")) return;
+        const volunteers = getData(getUserScopedKeys().volunteers).filter(v => v.id !== id);
+        setData(getUserScopedKeys().volunteers, volunteers);
+        renderAll();
+    }
+
+    document.getElementById("volunteerForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("volunteerEditId").value;
+        const item = {
+            name: document.getElementById("volunteerName").value.trim(),
+            email: document.getElementById("volunteerEmail").value.trim(),
+            phone: document.getElementById("volunteerPhone").value.trim(),
+            status: document.getElementById("volunteerStatus").value,
+            skills: document.getElementById("volunteerSkills").value.trim(),
+            roles: document.getElementById("volunteerRoles").value.trim(),
+            emergencyName: document.getElementById("volunteerEmergencyName").value.trim(),
+            emergencyPhone: document.getElementById("volunteerEmergencyPhone").value.trim(),
+            legalNotes: document.getElementById("volunteerLegalNotes").value.trim()
+        };
+
+        const data = getData(getUserScopedKeys().volunteers);
+        if (id) {
+            const idx = data.findIndex(v => v.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().volunteers, data);
+        closeModal("volunteerModal");
+        renderAll();
+    });
+
+    function renderEvents() {
+        const events = getData(getUserScopedKeys().events);
+        const wrap = document.getElementById("events");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <div class="toolbar-left"><h3 style="margin:0;">Events & Required Roles</h3></div>
+            <div class="toolbar-right"><button class="btn" onclick="openEventModal()">+ Add Event</button></div>
+          </div>
+          <div class="section-note">Create and update matches, training sessions, tournaments, fundraisers and define the volunteer roles needed.</div>
+          ${events.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Type</th>
+                    <th>Date & Time</th>
+                    <th>Location</th>
+                    <th>Required Roles</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${events.map(e => `
+                    <tr>
+                      <td>${escapeHtml(e.name)}</td>
+                      <td>${escapeHtml(e.type)}</td>
+                      <td>${escapeHtml(e.date)}<br>${escapeHtml(e.time)}</td>
+                      <td>${escapeHtml(e.location)}</td>
+                      <td>${escapeHtml(e.roles)}</td>
+                      <td><span class="badge badge-blue">${escapeHtml(e.status)}</span></td>
+                      <td>
+                        <a class="link-btn" onclick="editEvent(${e.id})">Edit</a>
+                        <a class="link-btn delete" onclick="deleteEvent(${e.id})">Delete</a>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No events created yet.</div>`}
+        </div>
+      `;
+    }
+
+    function renderMeeting() {
+        const wrap = document.getElementById("meeting");
+        const data = getData(getUserScopedKeys().meetingQuestions);
+
+        if (!wrap) return;
+
+        wrap.innerHTML = `
+        <div class="card">
+            <h3>Consultation Questions for Club Chair</h3>
+            <p class="section-note">Questions prepared for the next client meeting.</p>
+            ${data.length ? `
+                <div class="list-grid">
+                    ${data.map(item => `
+                        <div class="mini-card">
+                            <p><strong>Q${item.id}.</strong> ${escapeHtml(item.question)}</p>
+                        </div>
+                    `).join("")}
+                </div>
+            ` : `<div class="empty-state">No consultation questions recorded.</div>`}
+        </div>
+    `;
+    }
+
+    function openEventModal() {
+        document.getElementById("eventModalTitle").textContent = "Add Event";
+        document.getElementById("eventForm").reset();
+        document.getElementById("eventEditId").value = "";
+        document.getElementById("eventModal").style.display = "block";
+    }
+
+    function editEvent(id) {
+        const item = getData(getUserScopedKeys().events).find(e => e.id === id);
+        if (!item) return;
+        document.getElementById("eventEditId").value = item.id;
+        document.getElementById("eventName").value = item.name;
+        document.getElementById("eventType").value = item.type;
+        document.getElementById("eventDate").value = item.date;
+        document.getElementById("eventTime").value = item.time;
+        document.getElementById("eventLocation").value = item.location;
+        document.getElementById("eventStatus").value = item.status;
+        document.getElementById("eventRoles").value = item.roles;
+        document.getElementById("eventModalTitle").textContent = "Edit Event";
+        document.getElementById("eventModal").style.display = "block";
+    }
+
+    function deleteEvent(id) {
+        if (!confirm("Delete this event?")) return;
+        const events = getData(getUserScopedKeys().events).filter(e => e.id !== id);
+        setData(getUserScopedKeys().events, events);
+        renderAll();
+    }
+
+    document.getElementById("eventForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("eventEditId").value;
+        const item = {
+            name: document.getElementById("eventName").value.trim(),
+            type: document.getElementById("eventType").value,
+            date: document.getElementById("eventDate").value,
+            time: document.getElementById("eventTime").value,
+            location: document.getElementById("eventLocation").value.trim(),
+            status: document.getElementById("eventStatus").value,
+            roles: document.getElementById("eventRoles").value.trim()
+        };
+
+        const data = getData(getUserScopedKeys().events);
+        if (id) {
+            const idx = data.findIndex(x => x.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().events, data);
+        closeModal("eventModal");
+        renderAll();
+    });
+
+    function renderAvailability() {
+        const data = getData(getUserScopedKeys().availability);
+        const wrap = document.getElementById("availability");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <h3 style="margin:0;">Volunteer Availability</h3>
+            <button class="btn" onclick="openAvailabilityModal()">+ Record Availability</button>
+          </div>
+          <div class="section-note">Enter available dates and times so the system can support assignment and conflict checking.</div>
+          ${data.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Volunteer</th>
+                    <th>Date</th>
+                    <th>Time Range</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(a => `
+                    <tr>
+                      <td>${escapeHtml(a.volunteer)}</td>
+                      <td>${escapeHtml(a.date)}</td>
+                      <td>${escapeHtml(a.startTime)} - ${escapeHtml(a.endTime)}</td>
+                      <td><span class="badge ${a.status === 'Available' ? 'badge-green' : a.status === 'Preferred' ? 'badge-blue' : 'badge-red'}">${escapeHtml(a.status)}</span></td>
+                      <td>
+                        <a class="link-btn" onclick="editAvailability(${a.id})">Edit</a>
+                        <a class="link-btn delete" onclick="deleteAvailability(${a.id})">Delete</a>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No availability records yet.</div>`}
+        </div>
+      `;
+    }
+
+    function openAvailabilityModal() {
+        document.getElementById("availabilityModalTitle").textContent = "Record Volunteer Availability";
+        document.getElementById("availabilityForm").reset();
+        document.getElementById("availabilityEditId").value = "";
+        refreshSelectOptions();
+        document.getElementById("availabilityModal").style.display = "block";
+    }
+
+    function editAvailability(id) {
+        const item = getData(getUserScopedKeys().availability).find(a => a.id === id);
+        if (!item) return;
+        refreshSelectOptions();
+        document.getElementById("availabilityEditId").value = item.id;
+        document.getElementById("availabilityVolunteer").value = item.volunteer;
+        document.getElementById("availabilityDate").value = item.date;
+        document.getElementById("availabilityStart").value = item.startTime;
+        document.getElementById("availabilityEnd").value = item.endTime;
+        document.getElementById("availabilityStatus").value = item.status;
+        document.getElementById("availabilityModalTitle").textContent = "Edit Availability";
+        document.getElementById("availabilityModal").style.display = "block";
+    }
+
+    function deleteAvailability(id) {
+        if (!confirm("Delete this availability record?")) return;
+        setData(getUserScopedKeys().availability, getData(getUserScopedKeys().availability).filter(a => a.id !== id));
+        renderAll();
+    }
+
+    document.getElementById("availabilityForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("availabilityEditId").value;
+        const start = document.getElementById("availabilityStart").value;
+        const end = document.getElementById("availabilityEnd").value;
+        if (start >= end) {
+            alert("End time must be later than start time.");
+            return;
+        }
+
+        const item = {
+            volunteer: document.getElementById("availabilityVolunteer").value,
+            date: document.getElementById("availabilityDate").value,
+            startTime: start,
+            endTime: end,
+            status: document.getElementById("availabilityStatus").value
+        };
+
+        const data = getData(getUserScopedKeys().availability);
+        if (id) {
+            const idx = data.findIndex(a => a.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().availability, data);
+        closeModal("availabilityModal");
+        renderAll();
+    });
+
+    function renderAssignments() {
+        const data = getData(getUserScopedKeys().assignments);
+        const wrap = document.getElementById("assignments");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <h3 style="margin:0;">Volunteer Assignments</h3>
+            <button class="btn" onclick="openAssignmentModal()">+ Add Assignment</button>
+          </div>
+          <div class="section-note">Assignments are checked against volunteer role capability, availability and double booking risk.</div>
+          ${data.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Volunteer</th>
+                    <th>Event</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Validation</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(a => {
+            const issues = detectAssignmentIssues(a, a.id);
+            return `
+                      <tr>
+                        <td>${escapeHtml(a.volunteer)}</td>
+                        <td>${escapeHtml(a.event)}</td>
+                        <td>${escapeHtml(a.role)}</td>
+                        <td><span class="badge ${a.status === 'Assigned' ? 'badge-green' : a.status === 'Pending' ? 'badge-orange' : 'badge-grey'}">${escapeHtml(a.status)}</span></td>
+                        <td>
+                          ${issues.length
+                ? issues.map(i => `<span class="badge badge-red">${escapeHtml(i)}</span>`).join(" ")
+                : `<span class="badge badge-green">Valid</span>`}
+                        </td>
+                        <td>
+                          <a class="link-btn" onclick="editAssignment(${a.id})">Edit</a>
+                          <a class="link-btn delete" onclick="deleteAssignment(${a.id})">Delete</a>
+                        </td>
+                      </tr>
+                    `;
+        }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No assignment records available.</div>`}
+        </div>
+      `;
+    }
+
+    function openAssignmentModal() {
+        document.getElementById("assignmentModalTitle").textContent = "Assign Volunteer";
+        document.getElementById("assignmentForm").reset();
+        document.getElementById("assignmentEditId").value = "";
+        refreshSelectOptions();
+        document.getElementById("assignmentModal").style.display = "block";
+    }
+
+    function editAssignment(id) {
+        const item = getData(getUserScopedKeys().assignments).find(a => a.id === id);
+        if (!item) return;
+        refreshSelectOptions();
+        document.getElementById("assignmentEditId").value = item.id;
+        document.getElementById("assignmentVolunteer").value = item.volunteer;
+        document.getElementById("assignmentEvent").value = item.event;
+        document.getElementById("assignmentRole").value = item.role;
+        document.getElementById("assignmentStatus").value = item.status;
+        document.getElementById("assignmentModalTitle").textContent = "Edit Assignment";
+        document.getElementById("assignmentModal").style.display = "block";
+    }
+
+    function deleteAssignment(id) {
+        if (!confirm("Delete this assignment?")) return;
+        setData(getUserScopedKeys().assignments, getData(getUserScopedKeys().assignments).filter(a => a.id !== id));
+        renderAll();
+    }
+
+    document.getElementById("assignmentForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("assignmentEditId").value;
+        const item = {
+            volunteer: document.getElementById("assignmentVolunteer").value,
+            event: document.getElementById("assignmentEvent").value,
+            role: document.getElementById("assignmentRole").value.trim(),
+            status: document.getElementById("assignmentStatus").value
+        };
+
+
+
+        const issues = detectAssignmentIssues(item, id ? Number(id) : null);
+        const blockingIssues = issues.filter(x =>
+            x === "Possible double booking" ||
+            x === "Volunteer not available for event time"
+        );
+
+        if (blockingIssues.length) {
+            alert("Assignment blocked:\n- " + blockingIssues.join("\n- "));
+            return;
+        }
+
+        if (issues.length) {
+            const proceed = confirm("This assignment has warnings:\n- " + issues.join("\n- ") + "\n\nSave anyway?");
+            if (!proceed) return;
+        }
+
+
+
+        const data = getData(getUserScopedKeys().assignments);
+        if (id) {
+            const idx = data.findIndex(a => a.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().assignments, data);
+        closeModal("assignmentModal");
+        renderAll();
+    });
+
+    function renderConflicts() {
+        const assignments = getData(getUserScopedKeys().assignments);
+        const issuesList = [];
+
+        assignments.forEach(a => {
+            const issues = detectAssignmentIssues(a, a.id);
+            if (issues.length) {
+                issuesList.push({
+                    volunteer: a.volunteer,
+                    event: a.event,
+                    role: a.role,
+                    issues
+                });
+            }
+        });
+
+        const wrap = document.getElementById("conflicts");
+        wrap.innerHTML = `
+        <div class="card">
+          <h3>Scheduling Conflict Check</h3>
+          <div class="section-note">Used to detect double booking, role mismatch and missing availability before confirming scheduling decisions.</div>
+          ${issuesList.length ? `
+            <div class="alert alert-warning">
+              ${issuesList.length} assignment record(s) currently contain scheduling or validation issues.
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Volunteer</th>
+                    <th>Event</th>
+                    <th>Role</th>
+                    <th>Conflict Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${issuesList.map(i => `
+                    <tr>
+                      <td>${escapeHtml(i.volunteer)}</td>
+                      <td>${escapeHtml(i.event)}</td>
+                      <td>${escapeHtml(i.role)}</td>
+                      <td>${i.issues.map(x => `<span class="badge badge-red">${escapeHtml(x)}</span>`).join(" ")}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No current scheduling conflicts detected.</div>`}
+        </div>
+      `;
+    }
+
+    function renderParticipation() {
+        const data = getData(getUserScopedKeys().participation);
+        const wrap = document.getElementById("participation");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <h3 style="margin:0;">Participation Tracking</h3>
+            <button class="btn" onclick="openParticipationModal()">+ Add Participation Record</button>
+          </div>
+          <div class="section-note">Track attendance, hours contributed, game score information and volunteer involvement history.</div>
+          ${data.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Volunteer</th>
+                    <th>Event</th>
+                    <th>Attendance</th>
+                    <th>Hours</th>
+                    <th>Game Score</th>
+                    <th>Role Performed</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(p => `
+                    <tr>
+                      <td>${escapeHtml(p.volunteer)}</td>
+                      <td>${escapeHtml(p.event)}</td>
+                      <td><span class="badge ${p.attendance === 'Present' ? 'badge-green' : p.attendance === 'Late' ? 'badge-orange' : 'badge-red'}">${escapeHtml(p.attendance)}</span></td>
+                      <td>${escapeHtml(p.hours)}</td>
+                      <td>${escapeHtml(p.score || "N/A")}</td>
+                      <td>${escapeHtml(p.role || "N/A")}</td>
+                      <td>
+                        <a class="link-btn" onclick="editParticipation(${p.id})">Edit</a>
+                        <a class="link-btn delete" onclick="deleteParticipation(${p.id})">Delete</a>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No participation records yet.</div>`}
+        </div>
+      `;
+    }
+
+    function openParticipationModal() {
+        document.getElementById("participationModalTitle").textContent = "Record Participation";
+        document.getElementById("participationForm").reset();
+        document.getElementById("participationEditId").value = "";
+        refreshSelectOptions();
+        document.getElementById("participationModal").style.display = "block";
+    }
+
+    function editParticipation(id) {
+        const item = getData(getUserScopedKeys().participation).find(p => p.id === id);
+        if (!item) return;
+        refreshSelectOptions();
+        document.getElementById("participationEditId").value = item.id;
+        document.getElementById("participationVolunteer").value = item.volunteer;
+        document.getElementById("participationEvent").value = item.event;
+        document.getElementById("participationAttendance").value = item.attendance;
+        document.getElementById("participationHours").value = item.hours;
+        document.getElementById("participationScore").value = item.score || "";
+        document.getElementById("participationRole").value = item.role || "";
+        document.getElementById("participationModalTitle").textContent = "Edit Participation";
+        document.getElementById("participationModal").style.display = "block";
+    }
+
+    function deleteParticipation(id) {
+        if (!confirm("Delete this participation record?")) return;
+        setData(getUserScopedKeys().participation, getData(getUserScopedKeys().participation).filter(p => p.id !== id));
+        renderAll();
+    }
+
+    document.getElementById("participationForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("participationEditId").value;
+        const item = {
+            volunteer: document.getElementById("participationVolunteer").value,
+            event: document.getElementById("participationEvent").value,
+            attendance: document.getElementById("participationAttendance").value,
+            hours: Number(document.getElementById("participationHours").value),
+            score: document.getElementById("participationScore").value.trim(),
+            role: document.getElementById("participationRole").value.trim()
+        };
+
+        const data = getData(getUserScopedKeys().participation);
+        if (id) {
+            const idx = data.findIndex(p => p.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().participation, data);
+        closeModal("participationModal");
+        renderAll();
+    });
+
+    function renderNotifications() {
+        const data = getData(getUserScopedKeys().notifications);
+        const wrap = document.getElementById("notifications");
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <h3 style="margin:0;">Notifications / Reminders</h3>
+            <button class="btn" onclick="openNotificationModal()">+ Create Notification</button>
+          </div>
+          <div class="section-note">Send notices to all volunteers or selected groups about upcoming events, schedule changes or meetings.</div>
+          ${data.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Target Group</th>
+                    <th>Delivery</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(n => `
+                    <tr>
+                      <td>${escapeHtml(n.title)}</td>
+                      <td>${escapeHtml(n.type)}</td>
+                      <td>${escapeHtml(n.target)}</td>
+                      <td><span class="badge ${n.delivery === 'Sent' ? 'badge-green' : 'badge-orange'}">${escapeHtml(n.delivery)}</span></td>
+                      <td>${escapeHtml(n.message)}</td>
+                      <td>
+                        <a class="link-btn" onclick="editNotification(${n.id})">Edit</a>
+                        <a class="link-btn delete" onclick="deleteNotification(${n.id})">Delete</a>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : `<div class="empty-state">No notification records yet.</div>`}
+        </div>
+      `;
+    }
+
+    function openNotificationModal() {
+        document.getElementById("notificationModalTitle").textContent = "Create Notification";
+        document.getElementById("notificationForm").reset();
+        document.getElementById("notificationEditId").value = "";
+        document.getElementById("notificationModal").style.display = "block";
+    }
+
+    function editNotification(id) {
+        const item = getData(getUserScopedKeys().notifications).find(n => n.id === id);
+        if (!item) return;
+        document.getElementById("notificationEditId").value = item.id;
+        document.getElementById("notificationTitle").value = item.title;
+        document.getElementById("notificationType").value = item.type;
+        document.getElementById("notificationTarget").value = item.target;
+        document.getElementById("notificationDelivery").value = item.delivery;
+        document.getElementById("notificationMessage").value = item.message;
+        document.getElementById("notificationModalTitle").textContent = "Edit Notification";
+        document.getElementById("notificationModal").style.display = "block";
+    }
+
+    function deleteNotification(id) {
+        if (!confirm("Delete this notification?")) return;
+        setData(getUserScopedKeys().notifications, getData(getUserScopedKeys().notifications).filter(n => n.id !== id));
+        renderAll();
+    }
+
+    document.getElementById("notificationForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const id = document.getElementById("notificationEditId").value;
+        const item = {
+            title: document.getElementById("notificationTitle").value.trim(),
+            type: document.getElementById("notificationType").value,
+            target: document.getElementById("notificationTarget").value,
+            delivery: document.getElementById("notificationDelivery").value,
+            message: document.getElementById("notificationMessage").value.trim()
+        };
+
+        const data = getData(getUserScopedKeys().notifications);
+        if (id) {
+            const idx = data.findIndex(n => n.id == id);
+            data[idx] = { ...data[idx], ...item };
+        } else {
+            data.push({ id: nextId(data), ...item });
+        }
+        setData(getUserScopedKeys().notifications, data);
+        closeModal("notificationModal");
+        renderAll();
+    });
+
+    function renderSecure() {
+        const volunteers = getData(getUserScopedKeys().volunteers);
+        const wrap = document.getElementById("secure");
+        wrap.innerHTML = `
+        <div class="card">
+          <h3>Maintain Secure Records</h3>
+          <div class="section-note">Administrative and emergency/legal information is shown in a restricted view to reflect secure record handling.</div>
+          ${volunteers.length ? `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Volunteer</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Emergency Contact</th>
+                    <th>Legal / Qualification Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${volunteers.map(v => `
+                    <tr>
+                      <td>${escapeHtml(v.name)}</td>
+                      <td>${escapeHtml(v.email)}</td>
+                      <td>${escapeHtml(maskPhone(v.phone))}</td>
+                      <td>${escapeHtml(v.emergencyName)}<br>${escapeHtml(maskPhone(v.emergencyPhone))}</td>
+                      <td>${escapeHtml(v.legalNotes || "No notes recorded")}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+            <div class="footer-note">This prototype masks part of sensitive phone information to reflect secure administrative access.</div>
+          ` : `<div class="empty-state">No secure records available because there are no volunteer records yet.</div>`}
+        </div>
+      `;
+    }
+
+    function renderSchedule() {
+        const volunteers = getData(getUserScopedKeys().volunteers);
+        const wrap = document.getElementById("schedule");
+
+        let options = volunteers.map(v => `<option value="${escapeHtml(v.name)}">${escapeHtml(v.name)}</option>`).join("");
+        if (!options) options = `<option value="">No volunteers</option>`;
+
+        wrap.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <div class="toolbar-left"><h3 style="margin:0;">Volunteer Schedule Search</h3></div>
+            <div class="toolbar-right">
+              <select id="scheduleVolunteerSelect" style="min-width:250px;" onchange="renderSelectedVolunteerSchedule()">
+                <option value="">Select volunteer</option>
+                ${options}
+              </select>
+            </div>
+          </div>
+          <div id="scheduleDetails" class="empty-state">Choose a volunteer to view availability, assignments and participation history.</div>
+        </div>
+      `;
+    }
+
+    function renderSelectedVolunteerSchedule() {
+        const volunteerName = document.getElementById("scheduleVolunteerSelect").value;
+        const target = document.getElementById("scheduleDetails");
+        if (!volunteerName) {
+            target.innerHTML = "Choose a volunteer to view availability, assignments and participation history.";
+            target.className = "empty-state";
+            return;
+        }
+
+        const availability = getData(getUserScopedKeys().availability).filter(a => a.volunteer === volunteerName);
+        const assignments = getData(getUserScopedKeys().assignments).filter(a => a.volunteer === volunteerName);
+        const participation = getData(getUserScopedKeys().participation).filter(p => p.volunteer === volunteerName);
+
+        target.className = "";
+        target.innerHTML = `
+        <div class="grid-3">
+          <div class="card">
+            <h3>Availability</h3>
+            ${availability.length ? availability.map(a => `
+              <div class="mini-card">
+                <p><strong>Date:</strong> ${escapeHtml(a.date)}</p>
+                <p><strong>Time:</strong> ${escapeHtml(a.startTime)} - ${escapeHtml(a.endTime)}</p>
+                <p><span class="badge ${a.status === 'Available' ? 'badge-green' : a.status === 'Preferred' ? 'badge-blue' : 'badge-red'}">${escapeHtml(a.status)}</span></p>
+              </div>
+            `).join("") : `<div class="empty-state">No availability records.</div>`}
+          </div>
+
+          <div class="card">
+            <h3>Assignments</h3>
+            ${assignments.length ? assignments.map(a => {
+            const issues = detectAssignmentIssues(a, a.id);
+            return `
+                <div class="mini-card">
+                  <p><strong>Event:</strong> ${escapeHtml(a.event)}</p>
+                  <p><strong>Role:</strong> ${escapeHtml(a.role)}</p>
+                  <p><strong>Status:</strong> <span class="badge badge-green">${escapeHtml(a.status)}</span></p>
+                  <p>${issues.length ? issues.map(i => `<span class="badge badge-red">${escapeHtml(i)}</span>`).join(" ") : `<span class="badge badge-green">Valid</span>`}</p>
+                </div>
+              `;
+        }).join("") : `<div class="empty-state">No assignments recorded.</div>`}
+          </div>
+
+          <div class="card">
+            <h3>Participation History</h3>
+            ${participation.length ? participation.map(p => `
+              <div class="mini-card">
+                <p><strong>Event:</strong> ${escapeHtml(p.event)}</p>
+                <p><strong>Attendance:</strong> ${escapeHtml(p.attendance)}</p>
+                <p><strong>Hours:</strong> ${escapeHtml(p.hours)}</p>
+                <p><strong>Role:</strong> ${escapeHtml(p.role || "N/A")}</p>
+              </div>
+            `).join("") : `<div class="empty-state">No participation history recorded.</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function seedDemoData() {
+        if (!confirm("Load demo data? Existing current data will be replaced.")) return;
+
+        setData(getUserScopedKeys().volunteers, [
+            {
+                id: 1,
+                name: "Sarah Brown",
+                email: "sarah.brown@example.com",
+                phone: "07123456789",
+                status: "Active",
+                skills: "First Aid, Coaching",
+                roles: "Coach, Medic",
+                emergencyName: "Tom Brown",
+                emergencyPhone: "07999888777",
+                legalNotes: "Valid first aid certificate until 2027"
+            },
+            {
+                id: 2,
+                name: "James Wilson",
+                email: "james.wilson@example.com",
+                phone: "07234567890",
+                status: "Active",
+                skills: "Refereeing, Match Support",
+                roles: "Referee, Equipment Setup",
+                emergencyName: "Emma Wilson",
+                emergencyPhone: "07888777666",
+                legalNotes: "Referee certification verified"
+            },
+            {
+                id: 3,
+                name: "Emily Clark",
+                email: "emily.clark@example.com",
+                phone: "07345678901",
+                status: "Active",
+                skills: "Event Support, Canteen",
+                roles: "Canteen Helper, Event Support Team, Equipment Setup",
+                emergencyName: "Luke Clark",
+                emergencyPhone: "07777666555",
+                legalNotes: "DBS / safeguarding note on file"
+            }
+        ]);
+
+        setData(getUserScopedKeys().events, [
+            {
+                id: 1,
+                name: "U16 Home Match",
+                type: "Match",
+                date: "2026-03-25",
+                time: "10:00",
+                location: "Main Pitch",
+                status: "Confirmed",
+                roles: "Coach:2, Medic:1, Referee:1, Equipment Setup:1"
+            },
+            {
+                id: 2,
+                name: "Senior Training Night",
+                type: "Training Session",
+                date: "2026-03-27",
+                time: "18:30",
+                location: "Training Ground",
+                status: "Planned",
+                roles: "Coach:2, Medic:1, Equipment Setup:1"
+            }
+        ]);
+
+        setData(getUserScopedKeys().availability, [
+            { id: 1, volunteer: "Sarah Brown", date: "2026-03-25", startTime: "09:00", endTime: "13:00", status: "Available" },
+            { id: 2, volunteer: "James Wilson", date: "2026-03-25", startTime: "09:30", endTime: "12:30", status: "Available" },
+            { id: 3, volunteer: "Emily Clark", date: "2026-03-25", startTime: "08:00", endTime: "12:00", status: "Preferred" },
+            { id: 4, volunteer: "Sarah Brown", date: "2026-03-27", startTime: "17:00", endTime: "20:30", status: "Available" }
+        ]);
+
+        setData(getUserScopedKeys().assignments, [
+            { id: 1, volunteer: "Sarah Brown", event: "U16 Home Match", role: "Medic", status: "Assigned" },
+            { id: 2, volunteer: "James Wilson", event: "U16 Home Match", role: "Referee", status: "Assigned" },
+            { id: 3, volunteer: "Emily Clark", event: "U16 Home Match", role: "Equipment Setup", status: "Assigned" }
+        ]);
+
+        setData(getUserScopedKeys().participation, [
+            { id: 1, volunteer: "Sarah Brown", event: "U16 Home Match", attendance: "Present", hours: 3, score: "21-15", role: "Medic" },
+            { id: 2, volunteer: "James Wilson", event: "U16 Home Match", attendance: "Present", hours: 2.5, score: "21-15", role: "Referee" }
+        ]);
+
+        setData(getUserScopedKeys().notifications, [
+            { id: 1, title: "Match Reminder", type: "Upcoming Event Reminder", target: "All Volunteers", delivery: "Sent", message: "Please arrive 30 minutes before the U16 home match." }
+        ]);
+
+        setData(getUserScopedKeys().qualifications, [
+            { id: 1, volunteer: "Sarah Brown", qualification: "First Aid Certificate", issueDate: "2025-04-01", expiryDate: "2026-04-01", note: "Required for Medic role" },
+            { id: 2, volunteer: "James Wilson", qualification: "Referee Licence", issueDate: "2025-03-01", expiryDate: "2026-03-15", note: "Required for Referee role" }
+        ]);
+
+        setData(getUserScopedKeys().meetingQuestions, [
+            { id: 1, question: "Which roles must hold a valid qualification before assignment?" },
+            { id: 2, question: "Should expired qualifications block assignment automatically?" },
+            { id: 3, question: "Who can view emergency contact and legal notes?" },
+            { id: 4, question: "Should double booking always be blocked?" },
+            { id: 5, question: "When should repeated role shortages trigger recruitment?" }
+        ]);
+
+        setData(getUserScopedKeys().gapReports, []);
+
+        renderAll();
+        alert("Demo data loaded.");
+    }
+
+    function resetAllData() {
+        if (!confirm("This will remove all current user's system data. Continue?")) return;
+        const keys = getUserScopedKeys();
+        Object.values(keys).forEach(k => localStorage.removeItem(k));
+        renderAll();
+        alert("Current user's prototype data cleared.");
+    }
+
+    const loggedUser = requireLogin("Club Administrator");
+    if (loggedUser) {
+        renderAll();
+        renderUserBar();
+    }
+</script>
+</body>
+</html>

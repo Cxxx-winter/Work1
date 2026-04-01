@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simply Rugby - Login</title>
+    <style>
+        :root {
+            --green: #2e7d32;
+            --green-dark: #1b5e20;
+            --green-light: #e8f5e9;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --border: #d9e2dc;
+            --text: #263238;
+            --muted: #607d8b;
+            --danger: #c62828;
+            --shadow: 0 8px 28px rgba(0,0,0,0.10);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #f4f7f6 0%, #edf7ef 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-shell {
+            width: 100%;
+            max-width: 1060px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid #edf2ef;
+        }
+
+        .auth-left {
+            background: linear-gradient(160deg, #2e7d32 0%, #1b5e20 100%);
+            color: #fff;
+            padding: 48px 42px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-left h1 {
+            margin: 0 0 14px;
+            font-size: 2rem;
+            line-height: 1.2;
+        }
+
+        .auth-left p {
+            margin: 0 0 18px;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .feature-box {
+            margin-top: 18px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+
+        .feature-item h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+        }
+
+        .feature-item p {
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .auth-right {
+            padding: 34px 30px;
+            background: #fff;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand h2 {
+            margin: 0;
+            color: var(--green);
+            font-size: 1.3rem;
+        }
+
+        .brand p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .time-pill {
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            color: var(--text);
+        }
+
+        .tab-wrap {
+            display: flex;
+            background: #f5f8f6;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+            gap: 6px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--green);
+            font-size: 0.95rem;
+            padding: 11px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .form-card {
+            border: 1px solid #edf2ef;
+            border-radius: 18px;
+            padding: 22px;
+            background: #fff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+        }
+
+        .form-card h3 {
+            margin: 0 0 8px;
+            color: var(--green);
+            font-size: 1.1rem;
+        }
+
+        .form-card .subtitle {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #37474f;
+        }
+
+        input, select {
+            width: 100%;
+            border: 1px solid #cfd8dc;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 0.93rem;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+        }
+
+        .btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 0.96rem;
+            background: var(--green);
+            color: white;
+            font-weight: bold;
+            transition: 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--green-dark);
+        }
+
+        .helper {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .alert {
+            display: none;
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #1b5e20;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            border: 1px solid #ef9a9a;
+            color: var(--danger);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .demo-box {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #fafcfb;
+            border: 1px dashed var(--border);
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+            .auth-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-left {
+                padding: 34px 24px;
+            }
+
+            .auth-right {
+                padding: 24px 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="auth-shell">
+    <section class="auth-left">
+        <h1>Simply Rugby</h1>
+        <p>
+            Volunteer Coordination & Scheduling System for managing volunteer information,
+            event roles, availability, assignments, notifications and participation records.
+        </p>
+
+        <div class="feature-box">
+            <div class="feature-item">
+                <h3>Volunteer Management</h3>
+                <p>Store contact details, skills, roles, emergency information and administrative notes.</p>
+            </div>
+            <div class="feature-item">
+                <h3>Scheduling Support</h3>
+                <p>Manage availability, assignments, role matching and scheduling conflict checking.</p>
+            </div>
+            <div class="feature-item">
+                <h3>Participation & Records</h3>
+                <p>Track attendance, hours, notifications and secure volunteer-related records.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="auth-right">
+        <div class="top-bar">
+            <div class="brand">
+                <h2>Account Access</h2>
+                <p>Register a new account or sign in to continue</p>
+            </div>
+            <div class="time-pill">Current Time: <span id="currentTime"></span></div>
+        </div>
+
+        <div class="tab-wrap">
+            <button id="loginTabBtn" class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button id="registerTabBtn" class="tab-btn" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <div id="successAlert" class="alert alert-success"></div>
+        <div id="errorAlert" class="alert alert-error"></div>
+
+        <div id="loginPanel" class="form-card">
+            <h3>Welcome Back</h3>
+            <p class="subtitle">Login with your registered email and password to enter the main system.</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required />
+                </div>
+
+                <button type="submit" class="btn">Login to System</button>
+            </form>
+
+            <div class="demo-box">
+                Default administrator account:<br>
+                Email: <strong>admin@simplyrugby.com</strong><br>
+                Password: <strong>123456</strong>
+            </div>
+        </div>
+
+        <div id="registerPanel" class="form-card hidden">
+            <h3>Create Account</h3>
+            <p class="subtitle">Register a user account for accessing the volunteer coordination system.</p>
+
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="registerName" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="registerRole" required>
+                            <option value="Club Administrator">Club Administrator</option>
+                            <option value="Volunteer Coordinator">Volunteer Coordinator</option>
+                            <option value="Volunteer">Volunteer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Email Address</label>
+                        <input type="email" id="registerEmail" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="registerPassword" required />
+                        <div class="helper">At least 6 characters.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="registerConfirmPassword" required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>
+    const AUTH_KEYS = {
+        users: "sr_users",
+        currentUser: "sr_currentUser"
+    };
+
+    function getUsers() {
+        return JSON.parse(localStorage.getItem(AUTH_KEYS.users)) || [];
+    }
+
+    function setUsers(users) {
+        localStorage.setItem(AUTH_KEYS.users, JSON.stringify(users));
+    }
+
+    function setCurrentUser(user) {
+        localStorage.setItem(AUTH_KEYS.currentUser, JSON.stringify(user));
+    }
+
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem(AUTH_KEYS.currentUser));
+    }
+    function getRedirectPageByRole(role) {
+        if (role === "Club Administrator") return "admin.html";
+        if (role === "Volunteer Coordinator") return "coordinator.html";
+        return "volunteer.html";
+    }
+
+    function showAlert(type, message) {
+        const success = document.getElementById("successAlert");
+        const error = document.getElementById("errorAlert");
+        success.style.display = "none";
+        error.style.display = "none";
+
+        if (type === "success") {
+            success.textContent = message;
+            success.style.display = "block";
+        } else {
+            error.textContent = message;
+            error.style.display = "block";
+        }
+    }
+
+    function clearAlerts() {
+        document.getElementById("successAlert").style.display = "none";
+        document.getElementById("errorAlert").style.display = "none";
+    }
+
+    function switchTab(tab) {
+        clearAlerts();
+        const loginPanel = document.getElementById("loginPanel");
+        const registerPanel = document.getElementById("registerPanel");
+        const loginTabBtn = document.getElementById("loginTabBtn");
+        const registerTabBtn = document.getElementById("registerTabBtn");
+
+        if (tab === "login") {
+            loginPanel.classList.remove("hidden");
+            registerPanel.classList.add("hidden");
+            loginTabBtn.classList.add("active");
+            registerTabBtn.classList.remove("active");
+        } else {
+            registerPanel.classList.remove("hidden");
+            loginPanel.classList.add("hidden");
+            registerTabBtn.classList.add("active");
+            loginTabBtn.classList.remove("active");
+        }
+    }
+
+    function updateClock() {
+        document.getElementById("currentTime").textContent = new Date().toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    (function seedDefaultAdmin() {
+        const users = getUsers();
+        const exists = users.some(u => u.email === "admin@simplyrugby.com");
+        if (!exists) {
+            users.push({
+                id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                name: "System Admin",
+                role: "Club Administrator",
+                email: "admin@simplyrugby.com",
+                password: "123456"
+            });
+            setUsers(users);
+        }
+    })();
+
+    window.addEventListener("load", () => {
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+            window.location.href = getRedirectPageByRole(currentUser.role);
+        }
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        clearAlerts();
+
+        const name = document.getElementById("registerName").value.trim();
+        const role = document.getElementById("registerRole").value;
+        const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword = document.getElementById("registerConfirmPassword").value;
+
+        if (password.length < 6) {
+            showAlert("error", "Password must be at least 6 characters.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert("error", "Passwords do not match.");
+            return;
+        }
+
+        const users = getUsers();
+        const existed = users.find(u => u.email === email);
+
+        if (existed) {
+            showAlert("error", "This email is already registered.");
+            return;
+        }
+
+        const newUser = {
+            id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
+            name,
+            role,
+            email,
+            password
+        };
+
+        users.push(newUser);
+        setUsers(users);
+
+        showAlert("success", "Registration successful. You can now log in.");
+        document.getElementById("registerForm").reset();
+        switchTab("login");
+        document.getElementById("loginEmail").value = email;
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        clearAlerts();
+
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const password = document.getElementById("loginPassword").value;
+
+        const users = getUsers();
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (!user) {
+            showAlert("error", "Invalid email or password.");
+            return;
+        }
+
+        setCurrentUser({
+            id: user.id,
+            name: user.name,
+            role: user.role,
+            email: user.email,
+            loginTime: new Date().toLocaleString()
+        });
+
+        showAlert("success", "Login successful. Redirecting...");
+        setTimeout(() => {
+            window.location.href = getRedirectPageByRole(user.role);
+        }, 700);
+    });
+</script>
+</body>
+</html>
